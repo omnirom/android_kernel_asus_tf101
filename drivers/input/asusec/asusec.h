@@ -24,7 +24,7 @@
 							ASUSEC_INFO("ec_data[%d] = 0x%x\n", i, array[i]);	\
 					} while(0)
 #else
-#define ASUSEC_INFO(format, arg...)	 
+#define ASUSEC_INFO(format, arg...)
 #define ASUSEC_I2C_DATA(array, i)
 #endif
 
@@ -34,9 +34,9 @@
 #define ASUSEC_ERR(format, arg...)	\
 	printk(KERN_ERR "asusec: [%s] " format , __FUNCTION__ , ## arg)
 
-//-----------------------------------------	       
+//-----------------------------------------
 
-#define DRIVER_DESC     		"ASUS EC driver"
+#define DRIVER_DESC     		"ASUS Dock EC Driver"
 #define DOCK_SDEV_NAME			"dock"
 #define CONVERSION_TIME_MS		50
 
@@ -84,16 +84,14 @@
 #define TEGRA_GPIO_PX5			189 // DOCK_IN	LOW: dock-in, HIGH: dock disconnected
 #define TEGRA_GPIO_PS4			148 // HALL_SENSOR, SW_LID
 //-----------------------------------------
-#define ASUSEC_KEY_TOUCHPAD		KEY_F2
-#define ASUSEC_KEY_AUTOBRIGHT	KEY_F3
-#define ASUSEC_KEY_SETTING		KEY_F4
+#define ASUSEC_KEY_TOUCHPAD_TOGGLE   0xCA   /* Request switch touchpad on or off */
 
 /*************scan 2 make mapping***************/
 #define ASUSEC_KEYPAD_ESC		0x76
 #define ASUSEC_KEYPAD_KEY_WAVE		0x0E
 #define ASUSEC_KEYPAD_KEY_1		0x16
 #define ASUSEC_KEYPAD_KEY_2		0X1E
-#define ASUSEC_KEYPAD_KEY_3		0x26	
+#define ASUSEC_KEYPAD_KEY_3		0x26
 #define ASUSEC_KEYPAD_KEY_4		0x25
 #define ASUSEC_KEYPAD_KEY_5		0x2E
 #define ASUSEC_KEYPAD_KEY_6        	0x36
@@ -161,14 +159,14 @@
 #define ASUSEC_KEYPAD_PAGEUP		0xE07D
 #define ASUSEC_KEYPAD_PAGEDOWN		0xE07A
 #define ASUSEC_KEYPAD_END			0xE069
-/************  JP keys *************/                       
-#define ASUSEC_HANKAKU_ZENKAKU		0x5F                
+/************  JP keys *************/
+#define ASUSEC_HANKAKU_ZENKAKU		0x5F
 #define ASUSEC_YEN					0x6A
-#define ASUSEC_MUHENKAN				0x67        
-#define ASUSEC_HENKAN				0x64        
+#define ASUSEC_MUHENKAN				0x67
+#define ASUSEC_HENKAN				0x64
 #define ASUSEC_HIRAGANA_KATAKANA	0x13
 #define ASUSEC_RO					0x51
-/********************************/    
+/********************************/
 /************  UK keys *************/
 #define ASUSEC_EUROPE_2				0x61
 /********************************/
@@ -228,7 +226,7 @@
 struct asusec_keypad{
 	int value;
 	int input_keycode;
-	int extend;	
+	int extend;
 };
 
 struct asusec_touchpad_relative{
@@ -271,11 +269,11 @@ struct asusec_chip {
 	struct delayed_work asusec_dock_init_work;
 	struct delayed_work asusec_fw_update_work;
 	struct delayed_work asusec_led_on_work;
-	struct delayed_work asusec_led_off_work;	
+	struct delayed_work asusec_led_off_work;
 	struct asusec_keypad keypad_data;
 	struct elantech_data *private;
 	struct timer_list asusec_timer;
-#if TOUCHPAD_MODE	
+#if TOUCHPAD_MODE
 	struct asusec_touchpad_absolute t_abs;
 #else
 	struct asusec_touchpad_relative touchpad_data;
@@ -293,19 +291,22 @@ struct asusec_chip {
 	char dock_pid[32];
 	int polling_rate;
 	int dock_in;	// 0: without dock, 1: with dock
-	int op_mode;	// 0: normal mode, 1: fw update mode	
+	int op_mode;	// 0: normal mode, 1: fw update mode
 	int kbc_value;	// capslock_led 0: led off, 1: led on
 	int dock_det;	// dock-in interrupt count
 	int dock_init;	// 0: dock not init, 1: dock init successfully
 	int d_index;	// touchpad byte counter
 	int suspend_state; // 0: normal, 1: suspend
-	int init_success; // 0: ps/2 not ready. 1: init OK
+	int init_success; // 0: ps/2 not ready. 1: init OK, -1: tp not ready
 	int wakeup_lcd;		// 0 : keep lcd state 1: make lcd on
 	int tp_wait_ack;	// 0 : normal mode, 1: waiting for an ACK
 	int tp_enable;		// 0 : touchpad has not enabled, 1: touchpad has enabled
 	int re_init;		// 0 : first time init, not re-init, 1: in re-init procedure
 	int ec_wakeup;		// 0 : ec shutdown when PAD in LP0, 1 : keep ec active when PAD in LP0,
 	int ap_wake_wakeup;	// 0 : no ap_wake wakeup signal, 1: get ap_wake wakeup signal
+
+	// OMNIROM
+	int kp_fn_mode; // 0: Keypad in normal mode, 0: Keypad in Fn mode
 };
 
 #endif
